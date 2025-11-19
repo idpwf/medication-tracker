@@ -6,6 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-// TODO understand receivers
-fun borderStroke(modifier: Modifier, color: Color): Modifier =
-    modifier.border(BorderStroke(1.dp, color))
+fun Modifier.borderStroke(color: Color): Modifier {
+    return this.border(BorderStroke(1.dp, color))
+}

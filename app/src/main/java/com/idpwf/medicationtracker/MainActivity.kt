@@ -54,12 +54,12 @@ class MainActivity : ComponentActivity() {
                 Scaffold { innerPadding ->
                     println(innerPadding)
                     Column {
-                        MedicationTrackerTopBar(borderStroke(defaultModifier, Color.Transparent))
+                        MedicationTrackerTopBar(defaultModifier.borderStroke(Color.Transparent))
 
                         MedicationTrackerMedsList(
                             viewModel.takenToday()
                                 .map { TakenMed(it.key, it.value) },
-                            modifier = borderStroke(defaultModifier, Color.Green)
+                            modifier = defaultModifier.borderStroke(Color.Green)
                         )
                     }
 //                    FloatingActionButton({
@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
 fun MedicationTrackerTopBar(modifier: Modifier) {
     println("Composing MedicationTrackerTopBar")
     Column(modifier) {
-        AppHeaderRow(borderStroke(modifier, Color.Blue))
+        AppHeaderRow(modifier.borderStroke(Color.Blue))
     }
 }
 
@@ -93,7 +93,7 @@ fun TakenMedTodayCounter(modifier: Modifier, count: Int) {
 
 @Composable
 fun TakenMedRow(modifier: Modifier, medicationName: String, takenToday: Int) {
-    Row(modifier.fillMaxWidth()) {
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         var takenToday by rememberSaveable { mutableIntStateOf(takenToday) }
 
         Button(
@@ -101,20 +101,19 @@ fun TakenMedRow(modifier: Modifier, medicationName: String, takenToday: Int) {
                 takenToday++
                 println("clicked on $medicationName ; new value of counter is $takenToday")
             },
-            modifier = borderStroke(Modifier.weight(4f), Color.Red)
+            modifier = Modifier.weight(4f).borderStroke(Color.Red)
         ) {
             Text(text = medicationName)
         }
 
         TakenMedTodayCounter(
-            modifier = borderStroke(Modifier.weight(1f), Color.Blue)
-                .align(Alignment.CenterVertically),
+            modifier = Modifier.weight(1f).borderStroke(Color.Blue),
             count = takenToday
         )
 
         Button(
             { },
-            modifier = borderStroke(Modifier.weight(1f), Color.Green)
+            modifier = Modifier.weight(1f).borderStroke(Color.Green)
         ) {
             Text("❌")
         }
@@ -123,7 +122,7 @@ fun TakenMedRow(modifier: Modifier, medicationName: String, takenToday: Int) {
 
 @Composable
 fun AppHeaderRow(modifier: Modifier) {
-    Row(modifier = borderStroke(modifier, Color.Magenta)) {
+    Row(modifier.borderStroke(Color.Magenta)) {
         Text(text = "Medication Tracker")
         Spacer(modifier.weight(1f))
         Button({ }) { }
@@ -135,17 +134,17 @@ fun TakenMedLabelRow(modifier: Modifier) {
     Row(modifier.fillMaxWidth()) {
         Text(
             text = "Medication Name and Dose",
-            modifier = borderStroke(Modifier.weight(4f), Color.Red),
+            modifier = Modifier.weight(4f).borderStroke(Color.Red),
             textAlign = TextAlign.Center
         )
         Text(
             text = "Today",
-            modifier = borderStroke(Modifier.weight(1f), Color.Blue),
+            modifier = Modifier.weight(1f).borderStroke(Color.Blue),
             textAlign = TextAlign.Center
         )
         Text(
             text = "Delete",
-            modifier = borderStroke(Modifier.weight(1f), Color.Green),
+            modifier = Modifier.weight(1f).borderStroke(Color.Green),
             textAlign = TextAlign.Center
         )
     }
