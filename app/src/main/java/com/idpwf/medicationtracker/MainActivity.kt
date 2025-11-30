@@ -10,9 +10,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.captionBarPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +26,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -30,7 +33,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.idpwf.medicationtracker.logic.MedicationTrackerViewModel
 import com.idpwf.medicationtracker.ui.theme.MedicationTrackerTheme
-import com.idpwf.medicationtracker.ui.util.borderStroke
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -43,30 +45,29 @@ class MainActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) { }
         }
 
-        val defaultModifier = Modifier
-            .captionBarPadding()
-            .statusBarsPadding()
-            .systemBarsPadding()
-            .navigationBarsPadding()
-
         setContent {
             MedicationTrackerTheme {
                 Scaffold { innerPadding ->
-                    println(innerPadding)
-                    Column {
-                        MedicationTrackerTopBar(defaultModifier.borderStroke(Color.Transparent))
+                    val paddedModifier = Modifier
+                        .captionBarPadding()
+                        .statusBarsPadding()
+                        .systemBarsPadding()
+                        .navigationBarsPadding()
+                        .padding(innerPadding)
+
+                    Column(paddedModifier) {
+                        MedicationTrackerTopBar(Modifier)
 
                         MedicationTrackerMedsList(
-                            viewModel.takenToday()
-                                .map { TakenMed(it.key, it.value) },
-                            modifier = defaultModifier.borderStroke(Color.Green)
+                            viewModel.takenToday().map { TakenMed(it.key, it.value) },
+                            Modifier
                         )
                     }
-//                    FloatingActionButton({
-//                        println("Clicked the floating button")
-//                    }, defaultModifier) {
-//                        Icons.Rounded.Add
-//                    }
+                    FloatingActionButton({
+                        println("Clicked the floating button")
+                    }, Modifier) {
+                        Icons.Rounded.Add
+                    }
                 }
             }
         }
@@ -75,9 +76,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MedicationTrackerTopBar(modifier: Modifier) {
-    println("Composing MedicationTrackerTopBar")
-    Column(modifier) {
-        AppHeaderRow(modifier.borderStroke(Color.Blue))
+    Column(Modifier) {
+        AppHeaderRow(Modifier)
     }
 }
 
@@ -101,19 +101,19 @@ fun TakenMedRow(modifier: Modifier, medicationName: String, takenToday: Int) {
                 takenToday++
                 println("clicked on $medicationName ; new value of counter is $takenToday")
             },
-            modifier = Modifier.weight(4f).borderStroke(Color.Red)
+            modifier = Modifier.weight(4f)
         ) {
             Text(text = medicationName)
         }
 
         TakenMedTodayCounter(
-            modifier = Modifier.weight(1f).borderStroke(Color.Blue),
+            modifier = Modifier.weight(1f),
             count = takenToday
         )
 
         Button(
             { },
-            modifier = Modifier.weight(1f).borderStroke(Color.Green)
+            modifier = Modifier.weight(1f)
         ) {
             Text("❌")
         }
@@ -122,10 +122,10 @@ fun TakenMedRow(modifier: Modifier, medicationName: String, takenToday: Int) {
 
 @Composable
 fun AppHeaderRow(modifier: Modifier) {
-    Row(modifier.borderStroke(Color.Magenta)) {
-        Text(text = "Medication Tracker")
-        Spacer(modifier.weight(1f))
-        Button({ }) { }
+    Row {
+        Spacer(Modifier.weight(1f))
+        Text(text = "Medication Tracker", textAlign = TextAlign.Center)
+        Spacer(Modifier.weight(1f))
     }
 }
 
@@ -134,17 +134,17 @@ fun TakenMedLabelRow(modifier: Modifier) {
     Row(modifier.fillMaxWidth()) {
         Text(
             text = "Medication Name and Dose",
-            modifier = Modifier.weight(4f).borderStroke(Color.Red),
+            modifier = Modifier.weight(4f),
             textAlign = TextAlign.Center
         )
         Text(
             text = "Today",
-            modifier = Modifier.weight(1f).borderStroke(Color.Blue),
+            modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center
         )
         Text(
             text = "Delete",
-            modifier = Modifier.weight(1f).borderStroke(Color.Green),
+            modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center
         )
     }
@@ -153,8 +153,7 @@ fun TakenMedLabelRow(modifier: Modifier) {
 
 @Composable
 fun MedicationTrackerMedsList(meds: List<TakenMed>, modifier: Modifier) {
-    println("Composing MedicationTrackerMedsList")
-    Column(modifier) {
+    Column(Modifier) {
         TakenMedLabelRow(Modifier)
         meds.forEach { takenMed ->
             TakenMedRow(Modifier, medicationName = takenMed.name, takenMed.amount)
