@@ -21,7 +21,7 @@ interface MedicationDao {
     @Query("SELECT * FROM medications_taken LIMIT 1")
     suspend fun getTodaysRecord(): MedicationsTakenRecord?
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(medicationsTakenRecord: MedicationsTakenRecord)
 
     @Update

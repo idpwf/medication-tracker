@@ -3,71 +3,71 @@ package com.idpwf.medicationtracker
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.captionBarPadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.idpwf.medicationtracker.logic.MedicationTrackerViewModel
 import com.idpwf.medicationtracker.ui.theme.MedicationTrackerTheme
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-
-        val viewModel: MedicationTrackerViewModel by viewModels()
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) { }
-        }
 
         setContent {
             MedicationTrackerTheme {
-                Scaffold { innerPadding ->
-                    val paddedModifier = Modifier
-                        .captionBarPadding()
-                        .statusBarsPadding()
-                        .systemBarsPadding()
-                        .navigationBarsPadding()
-                        .padding(innerPadding)
+                // The ViewModel is created using the viewModel() composable,
+                // which automatically handles its lifecycle.
+                val viewModel: MedicationTrackerViewModel = viewModel()
+                val takenToday by viewModel.takenToday.collectAsState()
 
-                    Column(paddedModifier) {
-                        MedicationTrackerTopBar(Modifier)
+                var showAddMedicationDialog by remember { mutableStateOf(false) }
 
+                Scaffold(
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = { showAddMedicationDialog = true }) {
+                            Text(text = "➕", fontSize = 24.sp)
+                        }
+                    }
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        MedicationTrackerTopBar()
                         MedicationTrackerMedsList(
-                            viewModel.takenToday().map { TakenMed(it.key, it.value) },
-                            Modifier
+                            meds = takenToday.map { TakenMed(it.key, it.value) },
+                            onMedicationTaken = { medicationName -> viewModel.takeMed(medicationName) }
                         )
                     }
-                    FloatingActionButton({
-                        println("Clicked the floating button")
-                    }, Modifier) {
-                        Icons.Rounded.Add
-                    }
+                }
+
+                if (showAddMedicationDialog) {
+                    AddMedicationDialog(
+                        onDismiss = { showAddMedicationDialog = false },
+                        onConfirm = {
+                            name, dosage -> viewModel.addMedication(name, dosage)
+                            showAddMedicationDialog = false
+                        }
+                    )
                 }
             }
         }
@@ -75,14 +75,50 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MedicationTrackerTopBar(modifier: Modifier) {
-    Column(Modifier) {
-        AppHeaderRow(Modifier)
+fun AddMedicationDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Unit) {
+    var name by remember { mutableStateOf("") }
+    var dosage by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Add New Medication") },
+        text = {
+            Column {
+                TextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Medication Name") }
+                )
+                Spacer(modifier = Modifier.padding(8.dp))
+                TextField(
+                    value = dosage,
+                    onValueChange = { dosage = it },
+                    label = { Text("Dosage (e.g., 100 mg)") }
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = { onConfirm(name, dosage) }) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+@Composable
+fun MedicationTrackerTopBar(modifier: Modifier = Modifier) {
+    Column(modifier) {
+        AppHeaderRow(modifier = Modifier.fillMaxWidth())
     }
 }
 
 @Composable
-fun TakenMedTodayCounter(modifier: Modifier, count: Int) {
+fun TakenMedTodayCounter(modifier: Modifier = Modifier, count: Int) {
     Text(
         text = count.toString(),
         modifier = modifier,
@@ -92,15 +128,15 @@ fun TakenMedTodayCounter(modifier: Modifier, count: Int) {
 }
 
 @Composable
-fun TakenMedRow(modifier: Modifier, medicationName: String, takenToday: Int) {
+fun TakenMedRow(
+    modifier: Modifier = Modifier, 
+    medicationName: String, 
+    takenToday: Int, 
+    onMedicationTaken: (String) -> Unit
+) {
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        var takenToday by rememberSaveable { mutableIntStateOf(takenToday) }
-
         Button(
-            onClick = {
-                takenToday++
-                println("clicked on $medicationName ; new value of counter is $takenToday")
-            },
+            onClick = { onMedicationTaken(medicationName) },
             modifier = Modifier.weight(4f)
         ) {
             Text(text = medicationName)
@@ -121,8 +157,8 @@ fun TakenMedRow(modifier: Modifier, medicationName: String, takenToday: Int) {
 }
 
 @Composable
-fun AppHeaderRow(modifier: Modifier) {
-    Row {
+fun AppHeaderRow(modifier: Modifier = Modifier) {
+    Row(modifier) {
         Spacer(Modifier.weight(1f))
         Text(text = "Medication Tracker", textAlign = TextAlign.Center)
         Spacer(Modifier.weight(1f))
@@ -130,7 +166,7 @@ fun AppHeaderRow(modifier: Modifier) {
 }
 
 @Composable
-fun TakenMedLabelRow(modifier: Modifier) {
+fun TakenMedLabelRow(modifier: Modifier = Modifier) {
     Row(modifier.fillMaxWidth()) {
         Text(
             text = "Medication Name and Dose",
@@ -150,36 +186,23 @@ fun TakenMedLabelRow(modifier: Modifier) {
     }
 }
 
-
 @Composable
-fun MedicationTrackerMedsList(meds: List<TakenMed>, modifier: Modifier) {
-    Column(Modifier) {
-        TakenMedLabelRow(Modifier)
+fun MedicationTrackerMedsList(
+    meds: List<TakenMed>,
+    modifier: Modifier = Modifier,
+    onMedicationTaken: (String) -> Unit
+) {
+    Column(modifier) {
+        TakenMedLabelRow(modifier = Modifier.fillMaxWidth())
         meds.forEach { takenMed ->
-            TakenMedRow(Modifier, medicationName = takenMed.name, takenMed.amount)
+            TakenMedRow(
+                modifier = Modifier.fillMaxWidth(),
+                medicationName = takenMed.name,
+                takenToday = takenMed.amount,
+                onMedicationTaken = onMedicationTaken
+            )
         }
     }
 }
-
-
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    MedicationTrackerTheme {
-//        MedicationTrackerTheme {
-//            Scaffold(modifier = Modifier.padding(top = 32.dp)) { innerPadding ->
-//                MedicationTrackerTopBar(Modifier.padding(innerPadding))
-//            }
-//        }
-//    }
-//}
 
 class TakenMed(val name: String, val amount: Int)
