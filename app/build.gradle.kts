@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "com.idpwf.medicationtracker"
+    namespace = "com.idpwf.routinetracker"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.idpwf.medicationtracker"
+        applicationId = "com.idpwf.routinetracker"
         minSdk = 35
         targetSdk = 36
         versionCode = 1

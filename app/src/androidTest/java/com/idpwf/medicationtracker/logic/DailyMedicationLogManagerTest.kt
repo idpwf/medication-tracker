@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.idpwf.medicationtracker.data.MedicationDao
-import com.idpwf.medicationtracker.data.MedicationDatabase
-import com.idpwf.medicationtracker.data.MedicationsTakenRecord
+import com.idpwf.routinetracker.data.MedicationDao
+import com.idpwf.routinetracker.data.MedicationDatabase
+import com.idpwf.routinetracker.data.MedicationsTakenRecord
+import com.idpwf.routinetracker.logic.DailyMedicationLogManager
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.After

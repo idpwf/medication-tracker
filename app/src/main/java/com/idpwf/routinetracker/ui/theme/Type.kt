@@ -1,4 +1,4 @@
-package com.idpwf.medicationtracker.ui.theme
+package com.idpwf.routinetracker.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

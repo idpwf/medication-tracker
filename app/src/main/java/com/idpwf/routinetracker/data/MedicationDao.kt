@@ -1,4 +1,4 @@
-package com.idpwf.medicationtracker.data
+package com.idpwf.routinetracker.data
 
 import androidx.room.Dao
 import androidx.room.Delete

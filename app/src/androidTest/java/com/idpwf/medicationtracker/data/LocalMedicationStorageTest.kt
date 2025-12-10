@@ -6,6 +6,10 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
+import com.idpwf.routinetracker.data.LocalMedicationStorage
+import com.idpwf.routinetracker.data.MedicationDao
+import com.idpwf.routinetracker.data.MedicationDatabase
+import com.idpwf.routinetracker.data.MedicationRecord
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -88,7 +92,8 @@ class LocalMedicationStorageTest {
     @Test
     fun deleteMedication_whenRecordDoesNotExist_returnsFalse() = runBlocking {
         // Arrange
-        val nonExistentRecord = MedicationRecord(id = 99, medicationName = "Non-Existent", dosage = "N/A")
+        val nonExistentRecord =
+            MedicationRecord(id = 99, medicationName = "Non-Existent", dosage = "N/A")
 
         // Act
         val result = storage.deleteMedication(nonExistentRecord)

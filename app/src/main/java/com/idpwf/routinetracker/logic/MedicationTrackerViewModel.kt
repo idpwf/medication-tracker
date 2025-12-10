@@ -1,11 +1,11 @@
-package com.idpwf.medicationtracker.logic
+package com.idpwf.routinetracker.logic
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.idpwf.medicationtracker.Medication
-import com.idpwf.medicationtracker.data.LocalMedicationStorage
-import com.idpwf.medicationtracker.data.MedicationRecord
+import com.idpwf.routinetracker.Medication
+import com.idpwf.routinetracker.data.LocalMedicationStorage
+import com.idpwf.routinetracker.data.MedicationRecord
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

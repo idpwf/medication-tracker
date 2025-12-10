@@ -1,9 +1,9 @@
-package com.idpwf.medicationtracker.logic
+package com.idpwf.routinetracker.logic
 
 import android.content.Context
-import com.idpwf.medicationtracker.data.MedicationDao
-import com.idpwf.medicationtracker.data.MedicationDatabase
-import com.idpwf.medicationtracker.data.MedicationsTakenRecord
+import com.idpwf.routinetracker.data.MedicationDao
+import com.idpwf.routinetracker.data.MedicationDatabase
+import com.idpwf.routinetracker.data.MedicationsTakenRecord
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

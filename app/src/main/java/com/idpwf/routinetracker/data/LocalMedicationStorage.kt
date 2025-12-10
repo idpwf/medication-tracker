@@ -1,4 +1,4 @@
-package com.idpwf.medicationtracker.data
+package com.idpwf.routinetracker.data
 
 import android.content.Context
 import kotlinx.serialization.json.Json

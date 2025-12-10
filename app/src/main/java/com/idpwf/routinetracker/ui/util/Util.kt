@@ -1,4 +1,4 @@
-package com.idpwf.medicationtracker.ui.util
+package com.idpwf.routinetracker.ui.util
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border

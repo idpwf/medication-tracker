@@ -1,4 +1,4 @@
-package com.idpwf.medicationtracker
+package com.idpwf.routinetracker
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.idpwf.medicationtracker.logic.MedicationTrackerViewModel
-import com.idpwf.medicationtracker.ui.theme.MedicationTrackerTheme
+import com.idpwf.routinetracker.logic.MedicationTrackerViewModel
+import com.idpwf.routinetracker.ui.theme.MedicationTrackerTheme
 
 class Medication(val id: Int, val name: String, val dosage: String, val takenToday: Int)
 
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             Icon(
                                 Icons.Filled.Add,
-                                contentDescription = "Add Medication",
+                                contentDescription = "Add Routine",
                                 modifier = Modifier.background(
                                     shape = MaterialTheme.shapes.medium,
                                     color = MaterialTheme.colorScheme.background
@@ -113,19 +113,19 @@ fun AddMedicationDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Un
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add New Medication") },
+        title = { Text("Add New Routine") },
         text = {
             Column {
                 TextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Medication Name") }
+                    label = { Text("Routine Name") }
                 )
                 Spacer(modifier = Modifier.padding(8.dp))
                 TextField(
                     value = dosage,
                     onValueChange = { dosage = it },
-                    label = { Text("Dosage (e.g., 100 mg)") }
+                    label = { Text("Note") }
                 )
             }
         },
@@ -150,7 +150,7 @@ fun MedicationTrackerTopBar(modifier: Modifier = Modifier) {
             .padding(top = 8.dp)
     ) {
         Text(
-            text = "Private Medication Tracker",
+            text = "Private Routine Tracker",
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -255,7 +255,7 @@ fun TakenMedRow(
                 ) {
                     Icon(
                         Icons.Filled.Delete,
-                        contentDescription = "Delete Medication"
+                        contentDescription = "Delete Routine"
                     )
                 }
             }
